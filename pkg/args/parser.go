@@ -18,7 +18,6 @@ func (p *Parser) Parse() {
 	t := reflect.TypeOf(p.model)
 	v := reflect.ValueOf(p.model)
 
-	// Desreferencia ponteiros
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 		v = v.Elem()
@@ -28,7 +27,6 @@ func (p *Parser) Parse() {
 		field := t.Field(i)
 		fieldValue := v.Field(i)
 
-		// Obtém a tag e o nome do argumento
 		tag := field.Tag.Get(tag_name)
 		if tag == "" {
 			continue 
@@ -55,7 +53,6 @@ func (p *Parser) Parse() {
 				} else {
 					fmt.Printf("Erro ao converter '%s' para int64: %v\n", argValue, err)
 				}
-			// Adicione mais tipos aqui se necessário
 			default:
 				fmt.Printf("Tipo não suportado: %s\n", field.Type.Kind())
 		}
