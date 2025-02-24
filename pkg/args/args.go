@@ -11,6 +11,13 @@ func AsMap() map[string]string {
 	return arguments()
 }
 
+func NewParser(model interface{}) *Parser {
+	return &Parser{
+		model: model,
+		args: arguments(),
+	}
+}
+
 func arguments() map[string]string {
 	arguments := make(map[string]string)
 
