@@ -9,18 +9,16 @@ import (
 func main() {
 
 	ars := args.AsMap()
-	
+
 	fmt.Println("\nArgs as a Map: ", ars)
 
-	
-	var Arguments struct {
-		Hello string `go_arg:"name:hello"`
-		Size  int64  `go_arg:"name:size"`
+	var User struct {
+		Name string `go_arg:"name|required"`
+		Age  int64  `go_arg:"age"`
 	}
 
-	parser := args.NewParser(&Arguments)
+	parser := args.NewParser(&User)
 	parser.Parse()
 
-
-	fmt.Println("\nArgs as a Struct: ", Arguments.Size)
+	fmt.Println("\nArgs as a Struct: ", User)
 }
