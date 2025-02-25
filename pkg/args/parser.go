@@ -33,11 +33,7 @@ func (p *Parser) Parse() {
 		}
 
 		tagParts := strings.Split(tag, "|")
-		argInfo := strings.SplitN(tagParts[0], ":", 2)
-		if len(argInfo) != 2 {
-			continue 
-		}
-		argName := argInfo[1]
+		argName  := tagParts[0]
 
 		argValue, ok := p.args[argName]
 		if !ok || !fieldValue.CanSet() {
