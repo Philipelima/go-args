@@ -2,19 +2,21 @@ package args
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
-const tag_name = "go_arg"
+const tagName = "go_arg"
+
 
 type Parser struct {
-	model interface{}
+	model any
 	args  map[string]string
 }
 
-func (p *Parser) Parse() {
+func (p *Parser) Parse() error {
 	t := reflect.TypeOf(p.model)
 	v := reflect.ValueOf(p.model)
 
@@ -23,11 +25,15 @@ func (p *Parser) Parse() {
 		v = v.Elem()
 	}
 
+	if reflect.TypeOf(p.model).Kind() != reflect.Ptr {
+		panic("model must be a pointer to a struct")
+	}
+
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		fieldValue := v.Field(i)
 
-		tag := field.Tag.Get(tag_name)
+		tag := field.Tag.Get(tagName)
 		if tag == "" {
 			continue 
 		}
@@ -43,33 +49,21 @@ func (p *Parser) Parse() {
 		switch field.Type.Kind() {
 			case reflect.String:
 				fieldValue.SetString(argValue)
-			case reflect.Int, reflect.Int64:
-				if intVal, err := strconv.ParseInt(argValue, 10, 64); err == nil {
+			case reflect.Int, reflect.Int64, reflect.Int32, reflect.Int16, reflect.Int8:
+				if intVal, err := parseInt(argValue, int(field.Type.Bits())); err == nil {
 					fieldValue.SetInt(intVal)
 				} else {
-					fmt.Printf("Erro ao converter '%s' para int64: %v\n", argValue, err)
-				}
-			case  reflect.Int32:
-				if intVal, err := strconv.ParseInt(argValue, 10, 34); err == nil {
-					fieldValue.SetInt(intVal)
-				} else {
-					fmt.Printf("Erro ao converter '%s' para int34: %v\n", argValue, err)
-				}
-			case reflect.Int16:
-				if intVal, err := strconv.ParseInt(argValue, 10, 16); err == nil {
-					fieldValue.SetInt(intVal)
-				} else {
-					fmt.Printf("Erro ao converter '%s' para int16: %v\n", argValue, err)
-				}
-			case reflect.Int8:
-				if intVal, err := strconv.ParseInt(argValue, 10, 8); err == nil {
-					fieldValue.SetInt(intVal)
-				} else {
-					fmt.Printf("Erro ao converter '%s' para int8: %v\n", argValue, err)
+					log.Printf("Error converting '%s' to %s: %v\n", argValue, field.Type.Kind(), err)
 				}
 			default:
-				fmt.Printf("Tipo não suportado: %s\n", field.Type.Kind())
+				return fmt.Errorf("unsupported type: %s", field.Type.Kind())
 		}
 	}
+
+	return nil
 }
 
+
+func parseInt(argValue string, bitSize int) (int64, error) {
+    return strconv.ParseInt(argValue, 10, bitSize)
+}
