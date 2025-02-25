@@ -13,8 +13,8 @@ func main() {
 	fmt.Println("\nArgs as a Map: ", ars)
 
 	var User struct {
-		Name string `go_arg:"name|required"`
-		Age  int64  `go_arg:"age"`
+		Name string `go_arg:"name"`
+		Age  int    `go_arg:"age"`
 	}
 
 	parser := args.NewParser(&User)
