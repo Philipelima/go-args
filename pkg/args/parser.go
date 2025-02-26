@@ -10,12 +10,24 @@ import (
 
 const tagName = "go_arg"
 
-
+// Parser is a struct responsible for parsing command-line arguments
+// and mapping them to struct fields based on struct tags.
 type Parser struct {
-	model any
-	args  map[string]string
+	model any // Struct model that holds the parsed values
+	args  map[string]string  // Map of command-line arguments
 }
 
+
+// Parse processes the provided model and fills its fields with values
+// from the args map based on struct tags.
+//
+// The model must be a pointer to a struct, or a panic will occur.
+//
+// Supported field types: 
+// - string
+// - int, int64, int32, int16, int8
+//
+// Returns an error if an unsupported field type is encountered.
 func (p *Parser) Parse() error {
 	t := reflect.TypeOf(p.model)
 	v := reflect.ValueOf(p.model)
@@ -63,7 +75,15 @@ func (p *Parser) Parse() error {
 	return nil
 }
 
-
+// parseInt converts a string to an integer of the specified bit size.
+//
+// Parameters:
+// - argValue: string representation of the integer
+// - bitSize: desired bit size (8, 16, 32, 64)
+//
+// Returns:
+// - int64: converted integer value
+// - error: error if conversion fails
 func parseInt(argValue string, bitSize int) (int64, error) {
     return strconv.ParseInt(argValue, 10, bitSize)
 }
