@@ -64,7 +64,5 @@ Args as a Map: map[name:Jhon age:30]
 Args as a Struct: {Jhon 30}
 ```
 
-## License
 
-This project is distributed under the MIT license.
 
